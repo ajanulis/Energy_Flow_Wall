@@ -22,9 +22,11 @@
 
 This project implements an LED control system with:
 - **Normal Operation Mode**: LED blinks at 1 Hz continuously
-- **Event-Triggered Mode**: On input interrupt, blink 3x @ 10 Hz then enter deep sleep
-- **Power Management**: Uses PSoC 5 deep sleep (hibernate) mode
-- **Interrupt-Driven Input**: Uses external interrupt for input detection
+- **UART Command Mode**: Receives "LED:X:Y" commands via UART to control blink patterns
+- **Button Event Mode**: On input interrupt, blink 3x @ 10 Hz then enter deep sleep
+- **Power Management**: Uses PSoC 5 deep sleep (hibernate) mode after command execution
+- **Interrupt-Driven Input**: Uses external interrupt for button detection
+- **Serial Communication**: 115200 baud UART for remote control
 
 ---
 
@@ -33,12 +35,14 @@ This project implements an LED control system with:
 ### Input Components
 - **InputPin**: Digital input pin connected to external switch/button
 - **InputInterrupt**: Interrupt component triggered by InputPin edge detection
+- **UART_1**: Serial communication component for receiving commands
 
 ### Output Components
 - **OutputPinSW**: Digital output pin controlling LED
 
 ### Configuration
 - Input interrupt triggers on edge (rising/falling - set in TopDesign)
+- UART_1 configured for 115200 baud, 8 data bits, no parity, 1 stop bit (8N1)
 - Global interrupts must be enabled for ISR operation
 
 ---
@@ -47,11 +51,29 @@ This project implements an LED control system with:
 
 ### `volatile uint8 inputEvent`
 - **Type:** `volatile uint8` (must be volatile for ISR communication)
-- **Purpose:** Flag set by ISR when input event occurs
+- **Purpose:** Flag set by ISR when button input event occurs
 - **Values:**
   - `0`: No event, normal operation
   - `1`: Event detected, trigger special mode
 - **Access:** Read/write from main loop, written by ISR
+
+### `char cmdBuffer[CMD_BUFFER_SIZE]`
+- **Type:** `char` array (size 32 bytes)
+- **Purpose:** Stores incoming UART command characters
+- **Access:** Written by UART receive logic, read by parser
+
+### `uint8 cmdIndex`
+- **Type:** `uint8`
+- **Purpose:** Tracks current position in command buffer
+- **Range:** 0 to CMD_BUFFER_SIZE-1
+
+### `volatile uint8 uartCmdReady`
+- **Type:** `volatile uint8`
+- **Purpose:** Flag indicating complete UART command received
+- **Values:**
+  - `0`: No command ready
+  - `1`: Command ready for parsing
+- **Access:** Set when newline/carriage return received
 
 ---
 
@@ -83,6 +105,50 @@ Blink(3, 10);  // 3 blinks at 10 Hz (50ms ON, 50ms OFF)
 
 ---
 
+### `ParseLEDCommand(char* cmd, uint8* blinkCount, uint16* freqHz)`
+
+**Description:** Parses UART command string in "LED:X:Y" format to extract blink parameters.
+
+**Parameters:**
+- `cmd` (char*): Null-terminated command string to parse
+- `blinkCount` (uint8*): Pointer to store parsed blink count
+- `freqHz` (uint16*): Pointer to store parsed frequency
+
+**Returns:**
+- `1`: Command parsed successfully
+- `0`: Parse failed (invalid format or out of range)
+
+**Command Format:**
+```
+LED:X:Y
+```
+Where:
+- **LED**: Device identifier (for future multi-device support)
+- **X**: Blink count (1-100)
+- **Y**: Frequency in Hz (1-100)
+
+**Example Usage:**
+```c
+uint8 blinks;
+uint16 freq;
+if(ParseLEDCommand("LED:5:20", &blinks, &freq)) {
+    Blink(blinks, freq);  // Execute 5 blinks at 20 Hz
+}
+```
+
+**Validation:**
+- Device identifier must be "LED"
+- Blink count: 1-100 (0 invalid)
+- Frequency: 1-100 Hz (0 invalid)
+- Missing fields return parse error
+
+**Notes:**
+- Uses `strtok()` for parsing (requires string.h)
+- Makes internal copy to avoid modifying original command
+- Invalid commands are silently ignored
+
+---
+
 ### `CY_ISR(SWPin_Control)`
 
 **Description:** Interrupt Service Routine triggered by InputPin edge detection.
@@ -108,21 +174,38 @@ Blink(3, 10);  // 3 blinks at 10 Hz (50ms ON, 50ms OFF)
 ```c
 CyGlobalIntEnable;                    // Enable global interrupts
 InputInterrupt_StartEx(SWPin_Control); // Attach ISR to interrupt
+UART_1_Start();                       // Start UART component
 Blink(2, 5);                          // Power-up indication
 ```
 
 **Main Loop Logic:**
-- **If no event** (`inputEvent == 0`):
-  - Blink LED at 1 Hz manually (500ms ON, 500ms OFF)
 
-- **If event detected** (`inputEvent == 1`):
-  1. Clear event flag
-  2. Blink 3x at 10 Hz (event indication)
-  3. Turn LED off
-  4. Clear any pending interrupts
-  5. Enter deep sleep (hibernate)
-  6. Wake on next interrupt
-  7. Resume normal operation
+1. **UART Receive Handler:**
+   - Check for incoming UART data (`UART_1_GetRxBufferSize()`)
+   - Build command string character by character
+   - Detect command termination (`\n` or `\r`)
+   - Set `uartCmdReady` flag when complete
+
+2. **UART Command Handler** (`uartCmdReady == 1`):
+   - Parse command using `ParseLEDCommand()`
+   - If valid LED:X:Y format:
+     1. Execute blink pattern (X blinks at Y Hz)
+     2. Turn LED off
+     3. Clear pending interrupts
+     4. Enter deep sleep (hibernate)
+     5. Wake on button interrupt
+   - If invalid, ignore and continue
+
+3. **Button Event Handler** (`inputEvent == 1`):
+   1. Clear event flag
+   2. Blink 3x at 10 Hz (event indication)
+   3. Turn LED off
+   4. Clear any pending interrupts
+   5. Enter deep sleep (hibernate)
+   6. Wake on next interrupt
+
+4. **Normal Operation** (no events):
+   - Blink LED at 1 Hz manually (500ms ON, 500ms OFF)
 
 ---
 
@@ -135,24 +218,40 @@ Enable Global Interrupts
   ↓
 Start Input Interrupt (ISR attached)
   ↓
+Start UART_1 (115200 baud)
+  ↓
 Power-up Blink (2x @ 5Hz)
   ↓
-┌─────────────────────────────────┐
-│   MAIN LOOP                     │
-│                                 │
-│  inputEvent == 0?               │
-│    YES → Normal 1Hz Blink       │
-│    NO  → Event Handler:         │
-│           • 3 Blinks @ 10Hz     │
-│           • Enter Deep Sleep    │
-│           • Wake on Interrupt   │
-│                                 │
-└─────────────────────────────────┘
-       ↑                    │
-       └────────────────────┘
-           (infinite loop)
+┌──────────────────────────────────────────────────┐
+│   MAIN LOOP                                      │
+│                                                  │
+│  1. Check UART RX Buffer                        │
+│     • Receive chars → Build command string      │
+│     • On '\n'/'\r' → Set uartCmdReady           │
+│                                                  │
+│  2. UART Command Ready?                         │
+│     YES → Parse "LED:X:Y"                       │
+│           Valid?                                │
+│             YES → Blink X times @ Y Hz          │
+│                   Enter Deep Sleep              │
+│             NO  → Ignore, continue              │
+│                                                  │
+│  3. Button Event (inputEvent == 1)?             │
+│     YES → Event Handler:                        │
+│           • 3 Blinks @ 10Hz                     │
+│           • Enter Deep Sleep                    │
+│           • Wake on Interrupt                   │
+│                                                  │
+│  4. Normal Operation:                           │
+│     → 1Hz Blink (500ms ON/OFF)                  │
+│                                                  │
+└──────────────────────────────────────────────────┘
+       ↑                              │
+       └──────────────────────────────┘
+              (infinite loop)
 
 ISR (async): InputPin edge → set inputEvent = 1
+UART (async): Receives characters from serial port
 ```
 
 ---
@@ -218,6 +317,92 @@ ISR (async): InputPin edge → set inputEvent = 1
 - **Purpose:** Start interrupt component with custom ISR
 - **Parameters:** Function pointer to ISR
 - **Example:** `InputInterrupt_StartEx(SWPin_Control);`
+
+---
+
+### UART Functions
+
+#### `UART_1_Start()`
+- **Purpose:** Initialize and start UART component
+- **When:** Call in main() before using UART
+- **Configuration:** 115200 baud, 8N1 (configured in TopDesign)
+- **Returns:** void
+
+#### `UART_1_GetRxBufferSize()`
+- **Purpose:** Check number of bytes in receive buffer
+- **Returns:** uint8 - number of unread bytes available
+- **Usage:** Poll to check for incoming data
+
+#### `UART_1_GetChar()`
+- **Purpose:** Read one character from receive buffer
+- **Returns:** char - next character from buffer
+- **Notes:** Check buffer size first to avoid blocking
+
+**Example UART Usage:**
+```c
+UART_1_Start();
+while(1) {
+    if(UART_1_GetRxBufferSize() > 0) {
+        char c = UART_1_GetChar();
+        // Process character
+    }
+}
+```
+
+---
+
+## UART Command Protocol
+
+### Command Format
+
+Commands must follow this exact format:
+```
+LED:X:Y\n
+```
+
+Where:
+- **LED** - Device identifier (case-sensitive)
+- **X** - Blink count (1-100)
+- **Y** - Frequency in Hz (1-100)
+- **\n** - Newline terminator (or \r)
+
+### Command Examples
+
+| Command | Blink Count | Frequency | Result |
+|---------|-------------|-----------|---------|
+| `LED:1:1\n` | 1 | 1 Hz | 1 slow blink then sleep |
+| `LED:5:10\n` | 5 | 10 Hz | 5 fast blinks then sleep |
+| `LED:10:2\n` | 10 | 2 Hz | 10 medium blinks then sleep |
+| `LED:3:20\n` | 3 | 20 Hz | 3 very fast blinks then sleep |
+
+### Invalid Commands
+
+These commands will be ignored:
+- `led:5:10\n` - Wrong case (must be "LED")
+- `LED:5\n` - Missing frequency
+- `LED:0:10\n` - Zero blink count
+- `LED:5:200\n` - Frequency out of range (>100)
+- `MOTOR:5:10\n` - Wrong device ID
+- `LED:5:10` - Missing terminator
+
+### Sending Commands
+
+**From terminal (Linux/Mac):**
+```bash
+echo "LED:5:10" > /dev/ttyUSB0
+```
+
+**From Python:**
+```python
+import serial
+ser = serial.Serial('/dev/ttyUSB0', 115200)
+ser.write(b'LED:5:10\n')
+```
+
+**From Arduino Serial Monitor:**
+- Set baud rate to 115200
+- Set line ending to "Newline" or "Both NL & CR"
+- Type: `LED:5:10`
 
 ---
 
