@@ -15,30 +15,44 @@ This project demonstrates an embedded system design featuring:
 
 - **Normal Operation**: LED blinks continuously at 1 Hz
 - **UART Control**: Send "LED:X:Y" commands via serial to control blink patterns
-- **Button Response**: On button press, LED blinks 3 times at 10 Hz then enters deep sleep
-- **Power Management**: Ultra-low power hibernate mode (~1-2µA)
-- **Wake on Interrupt**: System wakes from deep sleep on button press
 - **Visual Feedback**: Different blink patterns indicate system states
 - **Extensible Protocol**: Device-based command format supports future expansion
+- **Mesh Network Integration**: Works with NC1000 mesh network nodes via UART
+
+## Current Status
+
+✅ **Working**: UART command parsing and LED control
+⏸️ **Not implemented yet**: Sleep mode and interrupt-based wake (disabled for testing)
 
 ## Hardware Requirements
 
-- **PSoC 5 Development Board**
-- **Serial connection** (USB-UART or direct UART, 115200 baud)
+- **PSoC 5 Development Board** (CY8C5888LTQ-LP097)
+- **NC1000 Mesh Network Module**
 - **Components (configured in TopDesign.cysch):**
-  - Digital Input Pin (InputPin) - connected to button/switch
-  - Interrupt Component (InputInterrupt)
   - Digital Output Pin (OutputPinSW) - connected to LED
   - UART_1 Component - serial communication (115200 baud, 8N1)
+  - Digital Input Pin (InputPin) - for CTS/wake (currently disabled)
+  - Interrupt Component (InputInterrupt) - for wake from sleep (currently disabled)
+
+## Hardware Connections
+
+**CRITICAL:** Common ground is required for UART communication!
+
+```
+NC1000          PSoC 5
+------          ------
+GND      -----> GND     (MUST be connected!)
+TX       -----> RX      (UART receive)
+CTS      -----> InputPin (Interrupt/wake - currently disabled)
+```
 
 ## Blink Patterns
 
 | Pattern | Frequency | Count | Meaning |
 |---------|-----------|-------|---------|
 | Power-up | 5 Hz | 2 blinks | System initialized |
-| Normal | 1 Hz | Continuous | Active, waiting for input |
-| Button Event | 10 Hz | 3 blinks | Button pressed, entering sleep |
-| UART Command | Variable | Variable | Executes LED:X:Y command, then sleep |
+| Normal | 1 Hz | Continuous | Active, waiting for UART command |
+| UART Command | Variable | Variable | Executes LED:X:Y command, then resumes normal |
 
 ## UART Commands
 

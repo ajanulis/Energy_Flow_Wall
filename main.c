@@ -70,9 +70,12 @@ uint8 ParseLEDCommand(char* cmd, uint8* blinkCount, uint16* freqHz)
 /* ------------------------------------------------- */
 /* Interrupt Service Routine                         */
 /* ------------------------------------------------- */
+/* NOTE: We do NOT clear interrupt here because CTS */
+/* is shared with UART. We only clear before sleep. */
 CY_ISR(SWPin_Control)
 {
-    InputPin_ClearInterrupt();
+    /* DO NOT clear interrupt here - shared with UART CTS */
+    /* InputPin_ClearInterrupt(); */
     inputEvent = 1;
 }
 
@@ -87,8 +90,9 @@ int main(void)
 
     CyGlobalIntEnable;
 
-    /* Start interrupt component */
-    InputInterrupt_StartEx(SWPin_Control);
+    /* DISABLE interrupt for now - just testing UART */
+    /* InputInterrupt_StartEx(SWPin_Control); */
+    /* InputInterrupt_Disable(); */
 
     /* Start UART */
     UART_1_Start();
@@ -136,48 +140,14 @@ int main(void)
                 /* Execute the commanded pattern */
                 Blink(blinkCount, freqHz);
 
-                /* Prepare for DeepSleep */
-                OutputPinSW_Write(0);          /* LED off */
-                InputPin_ClearInterrupt();     /* clear pending edge */
-
-                /* -------- ENTER DEEPSLEEP (PSoC 5 WAY) -------- */
-                CyPmSaveClocks();
-                CyPmHibernate();
-                //CyPmSleep(PM_SLEEP_TIME_NONE, PM_SLEEP_SRC_PICU);
-                CyPmRestoreClocks();
-                /* -------- WAKES HERE -------- */
-
-                /* Restart UART after wake */
-                UART_1_Start();
+                /* Turn LED off after pattern */
+                OutputPinSW_Write(0);
             }
-            /* If parse failed, ignore command and continue */
-        }
-
-        /* Handle button input event */
-        if(inputEvent)
-        {
-            inputEvent = 0;
-
-            /* Event indication: 3 blinks @ 10 Hz */
-            Blink(3, 10);
-
-            /* Prepare for DeepSleep */
-            OutputPinSW_Write(0);          /* LED off */
-            InputPin_ClearInterrupt();     /* clear pending edge */
-
-            /* -------- ENTER DEEPSLEEP (PSoC 5 WAY) -------- */
-            CyPmSaveClocks();
-            CyPmHibernate();
-            //CyPmSleep(PM_SLEEP_TIME_NONE, PM_SLEEP_SRC_PICU);
-            CyPmRestoreClocks();
-            /* -------- WAKES HERE -------- */
-
-            /* Restart UART after wake */
-            UART_1_Start();
+            /* If parse failed, ignore and continue */
         }
 
         /* Normal operation: 1 Hz blink */
-        if(!uartCmdReady && !inputEvent)
+        if(!uartCmdReady)
         {
             OutputPinSW_Write(1);
             CyDelay(500);
