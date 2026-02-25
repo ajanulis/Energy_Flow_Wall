@@ -1,0 +1,8 @@
+﻿Designator,Footprint,Quantity,Value,LCSC Part #
+C1,0603,1,3u3 16V,
+D1,0603,1,Led_green,
+J1,ECV3-06,1,Conn_01x06_Pin,
+J2,PinHeader_2x06_P2.54mm_Vertical,1,Conn_02x06_Odd_Even,
+R1,0603,1,1k,
+R2,0603,1,10k,
+U1,NC1000,1,NC1000C-8,

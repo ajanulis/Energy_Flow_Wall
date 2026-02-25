@@ -1,0 +1,5 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Connector_PinHeader_2.54mm-PinHeader_2x06_P2.54mm_Vertical_smaller_holes")(type "KiCad")(uri "${KIPRJMOD}/Connector_PinHeader_2.54mm-PinHeader_2x06_P2.54mm_Vertical_smaller_holes.pretty")(options "")(descr ""))
+  (lib (name "Tag-Connect-ECV3-Footprints")(type "KiCad")(uri "/Users/Shared/Projects/#Actuator_EFW/KiCad/Libraries/Tag-Connect-ECV3-KiCad8Libs/Tag-Connect-ECV3-Footprints.pretty")(options "")(descr ""))
+)

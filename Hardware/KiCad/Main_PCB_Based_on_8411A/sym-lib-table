@@ -1,0 +1,10 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "FM20C06VBNN")(type "KiCad")(uri "${AIDAS_LIB}/FM20C06VBNN/FM20C06VBNN.kicad_sym")(options "")(descr ""))
+  (lib (name "CY8C5888LTQ-LP097")(type "KiCad")(uri "${AIDAS_LIB}/CY8C5888LTQ-LP097/CY8C5888LTQ-LP097.kicad_sym")(options "")(descr ""))
+  (lib (name "DRV8833PWPR")(type "KiCad")(uri "${AIDAS_LIB}/DRW8833/DRV8833PWPR.kicad_sym")(options "")(descr ""))
+  (lib (name "AP2139AK")(type "KiCad")(uri "${AIDAS_LIB}/AP2139AK_3_3TRG1/AP2139AK.kicad_sym")(options "")(descr ""))
+  (lib (name "AP7354")(type "KiCad")(uri "${AIDAS_LIB}/AP7354/AP7354.kicad_sym")(options "")(descr ""))
+  (lib (name "SHT45-AD1F-R2")(type "KiCad")(uri "${AIDAS_LIB}/SHT45/SHT45-AD1F-R2.kicad_sym")(options "")(descr ""))
+  (lib (name "New_Library")(type "KiCad")(uri "${AIDAS_LIB}/MOSFET/New_Library.kicad_sym")(options "")(descr ""))
+)

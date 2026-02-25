@@ -1,0 +1,6 @@
+"Id";"Designator";"Footprint";"Quantity";"Designation";"Supplier and ref";
+1;"U5";"NC1000c";1;"NC1000C";;;
+2;"U3";"HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.46x2.31mm_ThermalVias";1;"DRV8833PWP";;;
+3;"U1";"QFN40P800X800X100-69N";1;"CY8C5888LTQ-LP097";;;
+4;"U4";"Sensirion_DFN-4_1.5x1.5mm_P0.8mm_SHT4x_NoCentralPad";1;"SHT4x";;;
+5;"J2,J1";"FM20C06VBNN";2;"FM20C06VBNN";;;

@@ -1,2 +1,18 @@
 # Ignore private code repository subdirectory
 Energy_Flow_Wall_Code/
+
+# KiCad autosave and backup files
+*-save.pro
+*-save.kicad_pcb
+*-save.kicad_sch
+*.kicad_pcb-bak
+*.kicad_sch-bak
+_autosave-*
+*-backups/
+
+# KiCad user preferences (local)
+*.kicad_prl
+fp-info-cache
+
+# KiCad lock files
+*.lck

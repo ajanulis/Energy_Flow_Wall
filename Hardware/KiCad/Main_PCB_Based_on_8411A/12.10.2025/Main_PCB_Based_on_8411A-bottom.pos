@@ -1,0 +1,7 @@
+### Footprint positions - created on 2026-01-27T22:17:26+1300 ###
+### Printed by KiCad version 9.0.6
+## Unit = mm, Angle = deg.
+## Side : bottom
+# Ref     Val       Package                        PosX       PosY       Rot  Side
+U3        SHT45     SHT45_C_cutout_clean_new   160.0025  -121.5500    0.0000  bottom
+## End
