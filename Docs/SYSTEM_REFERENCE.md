@@ -47,10 +47,10 @@
 
 ## PSoC5 Firmware — Key PSoC Creator Components
 - QuadDec_3, QuadDec_4: hardware quadrature decoders for M1/M2 (2 QuadDecs, not 4)
-  - 16-bit counters: underflow wraps 0→65535, overflow wraps 65535→0
-  - Firmware must detect wrap and maintain signed 32-bit software position counter
+  - 16-bit counters (0–65535). Full output shaft revolution ≈ 6000 counts (2× decoding).
+  - Max flap travel ≈ 3000 counts — well within 16-bit range, no overflow risk during homing.
   - Previous iteration used extra QuadDecs to avoid recalculating registers on direction change;
-    current approach handles overflow/underflow in software with proper sequence
+    current approach handles direction changes in software with proper sequence.
 - PWM_M1, PWM_M2: motor speed control (0–255, 8-bit)
 - VDAC8_1, VDAC8_2, VDAC8_3: DAC for VREF (OCP threshold, 0–255, 8-bit, same scale as PWM)
 - Comp_1, Comp_2: comparators for overcurrent detection
