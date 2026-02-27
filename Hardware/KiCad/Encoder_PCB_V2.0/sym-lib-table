@@ -1,0 +1,6 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "V1.3_17.12.2018-rescue")(type "KiCad")(uri "${KIPRJMOD}/V1.3_17.12.2018-rescue.kicad_sym")(options "")(descr ""))
+  (lib (name "V2.0-rescue")(type "KiCad")(uri "${KIPRJMOD}/V2.0-rescue.kicad_sym")(options "")(descr ""))
+  (lib (name "NC1000")(type "KiCad")(uri "${KIPRJMOD}/NC1000.kicad_sym")(options "")(descr ""))
+)
