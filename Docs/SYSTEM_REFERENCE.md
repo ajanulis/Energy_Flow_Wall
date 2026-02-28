@@ -52,9 +52,9 @@
 - 2 motors, **mechanically independent** (M1 and M2 drive separate flaps)
 - Expected flap travel: ~180° (TBC by homing)
 
-## Encoders (Encoder PCB V2.0 — KiCad: Hardware/KiCad/Encoder_PCB_V2.0)
+## Encoders (Encoder PCB V2.0 — KiCad: /Users/Shared/Projects/#Actuator_EFW/KiCad/Pololu_Encoder_V2/Encoder.kicad_pro_v2)
 - Custom PCB, based on Pololu magnetic encoder design for Micro Metal Gearmotors
-- **12 CPR** on motor shaft (Hall effect, sensor: PSF-B85)
+- **12 CPR** on motor shaft (Hall effect, sensor: TLE4946-2K, Infineon, SOT-23)
 - Quadrature A+B only (no index). PSoC5 uses hardware QuadDec_3 / QuadDec_4 components.
 - Effective resolution: 12 × 4 × 248.98 ≈ **11,951 counts/output shaft revolution**
 - Expected counts for full travel (~90° at output shaft): **~3000 counts** (confirmed experimentally)
@@ -168,7 +168,7 @@ Source: PSoC_schematics_full_w_8411A_w_interrupt_new.pdf
 
 ## Sensor Formulas (Node-RED function d110437aa9daf440)
 - 0x33, 0x44 (HTU21D): T = -46.85 + 175.72 × raw/65536, RH = -6 + 125 × raw/65536; mask raw & 0xFFFC
-- 0x55 (SHT45): T = -45.0 + 175.0 × raw/65535, RH = -6.0 + 125.0 × raw/65535; mask raw & 0xFFFC
+- 0x55, 0x66 (SHT45): T = -45.0 + 175.0 × raw/65535, RH = -6.0 + 125.0 × raw/65535; mask raw & 0xFFFC
 
 ## GitHub
 - Repo: https://github.com/ajanulis/Energy_Flow_Wall.git
