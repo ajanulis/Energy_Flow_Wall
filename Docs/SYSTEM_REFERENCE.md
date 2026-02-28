@@ -10,8 +10,8 @@
 
 ## Device Types in Mesh
 - **Gateway**: RP5 + NC1000, runs NeoGateway TCP server, Node-RED, InfluxDB, Grafana
-- **Actuator**: PSoC5 + NC1000 + DRV8411A + 2 motors + 2 encoders + SHT45. Controls flaps. Node IDs confirmed: 0x55.
-- **Device**: NC1000-only nodes collecting T/H data. Node IDs: 0x33, 0x44, 0x66.
+- **Actuator**: PSoC5 + NC1000 + DRV8411A + 2 motors + 2 encoders + SHT45. Controls flaps. Node IDs confirmed: 0x55, 0x66.
+- **Device**: NC1000-only nodes collecting T/H data. Node IDs: 0x33, 0x44.
 
 ## Actuator Hardware (Main PCB — KiCad: Hardware/KiCad/Main_PCB_Based_on_8411A)
 
