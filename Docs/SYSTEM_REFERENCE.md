@@ -11,23 +11,35 @@
 ## Device Types in Mesh
 - **Gateway**: RP5 + NC1000, runs NeoGateway TCP server, Node-RED, InfluxDB, Grafana
 - **Actuator**: PSoC5 + NC1000 + DRV8411A + 2 motors + 2 encoders + SHT45. Controls flaps. Node IDs confirmed: 0x55.
-- **Device**: NC1000-only nodes collecting T/H data. Node IDs: 0x33 (Outside), 0x44 (Car).
+- **Device**: NC1000-only nodes collecting T/H data. Node IDs: 0x33, 0x44, 0x66.
 
 ## Actuator Hardware (Main PCB — KiCad: Hardware/KiCad/Main_PCB_Based_on_8411A)
-- **PSoC5**: CY8C5888LTQ-LP097 (ARM Cortex-M3, 80MHz, 256KB flash, 68-QFN)
-- **Motor driver**: DRV8411ARTER — single chip, dual H-bridge, drives both motors independently
+
+### ICs / Active components
+- **U1 — PSoC5**: CY8C5888LTQ-LP097 (ARM Cortex-M3, 80MHz, 256KB flash, 68-QFN)
+- **U2 — Motor driver**: DRV8411ARTER — single chip, dual H-bridge, drives both motors independently
   - AIPROPI / BIPROPI: current sense outputs (ratio 1:2000) → R11/R12 = 1K5Ω each → PSoC ADC
   - VREF: driven by PSoC VDAC8 (software-controlled OCP threshold)
   - nFAULT: active-low fault output → PSoC interrupt
-  - AIN1/AIN2, BIN1/BIN2: PWM inputs from PSoC (PWM_M1, PWM_M2 components)
-- **Motor supply**: TPS63020QDSJRQ1 buck-boost converter, Vin 1.8–5.5V → Vout **5.0V** (R7=1.8M, R10=200K)
+  - AIN1/AIN2, BIN1/BIN2: PWM inputs from PSoC (PWM_1, PWM_2 components)
+- **U3 — T/H sensor**: SHT45-AD1F-R2 (on Actuator board — reports its own T/H to mesh)
+- **U4 — Motor supply**: TPS63020QDSJRQ1 buck-boost converter, Vin 1.8–5.5V → Vout **5.0V** (R7=1.8M, R10=200K)
+  - L1 = XAL4020-152MEC 1.5µH inductor (Coilcraft, on the same supply)
   - Enabled only during motor motion (M_Power pin) to save battery
-- **Polarity protection**: Q1 = BUK6Y33-60PX PMOS FET (60V, 30A)
-- **System supply**: U5 = AP7354-33W5-7 LDO → 3.3V for logic (PSoC, NC1000, SHT45, encoders)
-- **T/H sensor**: U3 = SHT45 (on Actuator board itself — so Actuator reports its own T/H)
-- **Mesh radio**: U6 = NC1000C
-- **Status LED**: D1 = Blue
-- **Encoder connectors**: J4, J5 = FM20C06VBNN 6-pin (A, B, power, GND per motor)
+- **U5 — System supply**: AP7354-33W5-7 LDO → 3.3V for logic (PSoC, NC1000, SHT45, encoders)
+- **U6 — Mesh radio**: NC1000C
+- **Q1 — Polarity protection**: BUK6Y33-60PX PMOS FET (60V, 30A)
+
+### Passive / discrete
+- **D1**: Blue status LED (LTST-C170TBKT)
+- **R7=1.8MΩ, R10=200KΩ**: TPS63020 output voltage setting → 5.0V
+- **R11, R12=1K5Ω**: AIPROPI/BIPROPI current sense load resistors → PSoC ADC
+
+### Connectors
+- **J3**: BM03B-PASS-1-TFT — 3-pin JST, fan output (Fan_PWM → P2[3])
+- **J4, J5**: FM20C06VBNN — 6-pin encoder connectors (A, B, power, GND per motor)
+- **J1, J2, J6**: ECV3-06 Tag-Connect — programming/debug headers (PSoC + NC1000)
+- **JP1**: SolderJumper_3_Bridged12 — config jumper
 
 ## Motors
 - **Pololu #3078**: 250:1 (actual 248.98:1) Micro Metal Gearmotor HPCB 6V
