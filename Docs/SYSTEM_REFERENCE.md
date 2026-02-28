@@ -41,7 +41,7 @@
 - **J1, J2, J6**: ECV3-06 Tag-Connect — programming/debug headers (PSoC + NC1000)
 - **JP1**: SolderJumper_3_Bridged12 — motor power source selection
   - **1–2 bridged** (default): battery powered → routes supply through U4 (TPS63020 buck-boost) for stable 5V motor rail
-  - **2–3 bridged**: regulated supply (e.g. USB 5V 2A) → bypasses U4 entirely, connects supply directly to motor rail; U4 + L1 + R7 + R10 + C26 not needed in this config
+  - **2–3 bridged**: regulated supply (e.g. USB 5V 2A) → bypasses U4 entirely, connects supply directly to motor rail; confirmed DNP: U4, L1, R7, R10, C26; likely DNP (TBC): C22, C23, C24, C25, C29, C30, C31
 
 ## Motors
 - **Pololu #3078**: 250:1 (actual 248.98:1) Micro Metal Gearmotor HPCB 6V
