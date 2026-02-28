@@ -59,6 +59,7 @@
 - Effective resolution: 12 × 4 × 248.98 ≈ **11,951 counts/output shaft revolution**
 - Expected counts for full travel (~90° at output shaft): **~3000 counts** (confirmed experimentally)
 - Encoder power controlled by Hall_Pwr pin (off when not needed)
+- **TO BE DONE (next PCB revision)**: Power encoders from TPS63020 5V rail (already auto-switched by M_Power hardware OR gate — free power control, no extra FET needed). Add 8× voltage divider resistors on main PCB (2 per signal × 4 signals: M1_A, M1_B, M2_A, M2_B) to bring 5V open-drain outputs down to ~3.3V for PSoC. Divider values: R_top=5.6K + R_bottom=10K → 3.2V at PSoC pin. Encoder PCB unchanged (R1/R2 pull-ups to Vcc stay). Result: encoders off during sleep at zero extra BOM cost vs a FET.
 
 ## PSoC5 Firmware — Key PSoC Creator Components
 - QuadDec_3, QuadDec_4: hardware quadrature decoders for M1/M2 (2 QuadDecs, not 4)
@@ -75,8 +76,8 @@
 - Opamp_1, Opamp_2: AIPROPI / BIPROPI signal conditioning
 - Em_EEPROM: emulated EEPROM. Init: `Em_EEPROM_Init((uint32)storageArray)`.
   Read/Write: `Cy_Em_EEPROM_Read/Write(addr, data, size, &Em_EEPROM_context)`
-- Hall_Pwr: pin exists in firmware but Hall sensors removed in current HW — pin unused
-  - **PCB TODO (next revision)**: add encoder power enable FET to next PCB revision
+- Hall_Pwr: pin exists in firmware but not connected in current HW — pin unused
+  - **PCB TODO (next revision)**: encoder power will be switched via TPS63020 5V rail (see Encoders section) — Hall_Pwr pin may be repurposed or removed
 - Fan_PWM: fan output pin (driven by PWM_3)
 - IAQ_Pwr: not used, IAQ sensor not implemented
 
