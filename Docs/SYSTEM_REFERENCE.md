@@ -47,22 +47,54 @@
 
 ## PSoC5 Firmware — Key PSoC Creator Components
 - QuadDec_3, QuadDec_4: hardware quadrature decoders for M1/M2 (2 QuadDecs, not 4)
-  - 16-bit counters (0–65535). Full output shaft revolution ≈ 6000 counts (2× decoding).
-  - Max flap travel ≈ 3000 counts — well within 16-bit range, no overflow risk during homing.
-  - Previous iteration used extra QuadDecs to avoid recalculating registers on direction change;
-    current approach handles direction changes in software with proper sequence.
-- PWM_M1, PWM_M2: motor speed control (0–255, 8-bit)
-- VDAC8_1, VDAC8_2, VDAC8_3: DAC for VREF (OCP threshold, 0–255, 8-bit, same scale as PWM)
-- Comp_1, Comp_2: comparators for overcurrent detection
-- Opamp_1, Opamp_2: IPROPI signal conditioning
-- Em_EEPROM: emulated EEPROM for persistent calibration/homing parameters
-- M_Power: enables TPS63020 (motor power supply) — off when motors idle
+  - 16-bit signed counters. API: `QuadDec_3_GetCounter()` → int16, `QuadDec_3_SetCounter(int16)`
+  - Full output shaft revolution ≈ 6000 counts (2× decoding). Max flap travel ≈ 3000 counts.
+  - Counter trick for precise position stop: SetCounter(32767−steps) for CCW → overflow ISR fires
+    after exactly `steps` counts; SetCounter(steps−32768) for CW → underflow ISR fires.
+  - isr_QuadDec3 / isr_QuadDec4: user ISR components; use `QuadDec_3_GetEvents()` in handler
+    (flags: QuadDec_3_COUNTER_OVERFLOW, QuadDec_3_COUNTER_UNDERFLOW)
+- PWM_1, PWM_2: motor speed control (0–255, 8-bit). API: `PWM_1_WriteCompare(uint8)`
+- PWM_3: fan speed control. Output routed to Fan_PWM pin.
+- VDAC8_1, VDAC8_2: OCP threshold per motor (0–255). VDAC8_3: VREF for DRV8411A
+- Comp_1, Comp_2: OCP comparators. Outputs → M1_ovcr / M2_ovcr nets
+- Opamp_1, Opamp_2: AIPROPI / BIPROPI signal conditioning
+- Em_EEPROM: emulated EEPROM. Init: `Em_EEPROM_Init((uint32)storageArray)`.
+  Read/Write: `Cy_Em_EEPROM_Read/Write(addr, data, size, &Em_EEPROM_context)`
 - Hall_Pwr: pin exists in firmware but Hall sensors removed in current HW — pin unused
-  - **PCB TODO (next revision)**: encoders currently always powered from VREG_3.3V;
-    add encoder power enable FET to next PCB to switch them off when motors not moving
-- nFAULT: DRV8411A fault interrupt
-- Fan_PWM: fan control output → P2[3] → J3 connector
+  - **PCB TODO (next revision)**: add encoder power enable FET to next PCB revision
+- Fan_PWM: fan output pin (driven by PWM_3)
 - IAQ_Pwr: not used, IAQ sensor not implemented
+
+## PSoC5 Hardware Motor Control Architecture (from schematic)
+Source: PSoC_schematics_full_w_8411A_w_interrupt_new.pdf
+
+**M1_Go / M2_Go SR flip-flops (hardware state machine):**
+- Pulse M1_Go pin HIGH → SRFF sets (Q=1) → de-asserts PWM_1 kill → motor runs
+- QuadDec_3 overflow/underflow → resets M1_Go SRFF (Q=0) → asserts kill → motor stops
+- M1_ovcr (OC latch) → also resets M1_Go SRFF → motor stops on overcurrent
+- nFAULT (inverted) → resets both M1_Go and M2_Go SRFFs → emergency stop both
+
+**M_Power (TPS63020 enable) is hardware-driven:**
+- OR(M1_Go_SRFF_Q, M2_Go_SRFF_Q) → M_Power pin — automatic, no firmware control needed
+
+**Status register (Status_Read() → uint8):**
+| Bit | Mask | Meaning |
+|-----|------|---------|
+| 0 | 0x01 | M1 stopped (HIGH) / running (LOW) = !M1_Go_SRFF_Q |
+| 1 | 0x02 | M2 stopped (HIGH) / running (LOW) = !M2_Go_SRFF_Q |
+| 2 | 0x04 | M1 OC latched (M1_ovcr SRFF Q) |
+| 3 | 0x08 | M2 OC latched (M2_ovcr SRFF Q) |
+| 4 | 0x10 | nFAULT active (HIGH = DRV8411A fault) |
+
+- isr_Status fires on any status bit change → use for interrupt-driven move completion
+- RST_ovcr pin resets M1_ovcr + M2_ovcr SRFFs (clears OC latches)
+
+**Motor start sequence:**
+1. `ResetOCP()` — clear OC latches (RST_ovcr pulse)
+2. `VDAC8_1_SetValue(startup_thresh)` — apply startup OCP override
+3. `M1_Dir_Write(dir)` + `PWM_1_WriteCompare(pwm)` — set direction and speed
+4. `M1_Go_Write(1); CyDelayUs(10); M1_Go_Write(0)` — pulse to set SRFF, motor starts
+5. `CyDelay(d0_ms); VDAC8_1_SetValue(run_thresh)` — drop to running threshold
 
 ## Firmware Versioning
 - Format: main_vX.Y.Z — continue from v1.3.103 (sleep working) / v1.3.104 (sleep disabled debug)
