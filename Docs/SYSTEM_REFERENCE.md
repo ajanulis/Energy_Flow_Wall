@@ -79,7 +79,6 @@
 - Hall_Pwr: pin exists in firmware but not connected in current HW — pin unused
   - **PCB TODO (next revision)**: encoder power will be switched via TPS63020 5V rail (see Encoders section) — Hall_Pwr pin may be repurposed or removed
 - Fan_PWM: fan output pin (driven by PWM_3)
-- IAQ_Pwr: not used, IAQ sensor not implemented
 
 ## PSoC5 Hardware Motor Control Architecture (from schematic)
 Source: PSoC_schematics_full_w_8411A_w_interrupt_new.pdf
