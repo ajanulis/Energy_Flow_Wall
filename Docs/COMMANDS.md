@@ -114,6 +114,13 @@ Auto-home runs iteration loop: find min S where homing + 3-move validation pass,
 
 ### Motor Control (raw, for dev / calibration)
 
+**Prefer `V1` / `V2` for normal use.** M1/M2 take raw encoder counts, which are
+**not comparable between motors** — the DK demo unit ships with mixed gear
+ratios (M1: 250:1, full travel ≈ 715 counts; M2: 380:1, full travel ≈ 1095
+counts), so `M1,500` ≈ 70 % open while `M2,500` ≈ 46 % open. V1/V2 divide
+internally by each motor's stored travel range and stay correct across
+hardware swaps.
+
 | Command | Arg | Behaviour |
 |---------|-----|-----------|
 | `M1,<counts>` | signed int16 | Drive M1 to absolute position `<counts>` relative to `g_zero`. Reply: `M1=<actual>,<stop>` |
