@@ -32,9 +32,16 @@ This is the mechanical design for an Energy Flow Wall actuator based on the DRV8
 - **Communication:** NC1000 Mesh Network Module
 - **Interface:** UART (115200 baud)
 
+## Documentation
+
+- [`Docs/DK_USER_MANUAL.md`](Docs/DK_USER_MANUAL.md) — End-user manual for the shipped demo unit: setup, dashboard usage, Demo Mode, troubleshooting.
+- [`Docs/COMMANDS.md`](Docs/COMMANDS.md) — Developer/integrator reference: MQTT topics, JSON request format, full firmware command set, timeouts.
+- [`Docs/SYSTEM_REFERENCE.md`](Docs/SYSTEM_REFERENCE.md) — High-level system reference (architecture, mesh layout).
+- [`Docs/EFW_Functional_Requirements_1.md`](Docs/EFW_Functional_Requirements_1.md) — Original functional requirements document.
+
 ## Related Repositories
 
-For **source code and technical documentation** (private access only), see the private repository.
+The source code (firmware, RP5 pipeline, Node-RED deploy scripts) is maintained in a separate private repository. The documents above cover everything needed to interact with the system over MQTT without touching the source.
 
 ---
 
