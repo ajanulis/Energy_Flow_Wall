@@ -8,19 +8,19 @@
 
 1. **1× Actuator** — the wall unit itself. Contains PSoC5 + NC1000 mesh radio + 2 motors + 2 flaps + fan + built-in T/H sensor. Runs on 1× rechargeable 18650 cell (**not provided** — you'll need to source one).
 2. **1× Gateway** — Raspberry Pi 5 with NeoCortec NC1000 mesh daughter board on top. Supplied with EU-compatible power supply.
-3. **3× Xiaomi LYWSD03MMC room sensors** (custom ATC firmware). Labelled **Kitchen**, **Bedroom**, **Living**. **Shipped without batteries** — you need **3× CR2032**.
-4. **Ethernet cable** for the Gateway.
+3. **3× Xiaomi LYWSD03MMC room sensors** (custom ATC firmware). They aren't physically labelled — Node-RED maps them to **Kitchen**, **Bedroom** and **Living** by MAC address. **Shipped without batteries** — you need **3× CR2032**.
 
 **You will need to provide:**
 - 1× rechargeable 18650 cell for the actuator (3.2 V LiFePO₄, 3.7 V Li-ion, or 4.2 V all work) + a suitable charger.
 - 3× CR2032 coin cells for the Xiaomi room sensors.
+- 1× Ethernet cable to connect the Gateway to your router.
 
 ---
 
 ## 2. First-time Setup (5 minutes)
 
 ### 2.1 Gateway
-1. **Plug the Ethernet cable** from the Gateway into a free port on your router.
+1. **Plug an Ethernet cable** from the Gateway into a free port on your router.
 2. Plug the supplied power supply into the Gateway and into the wall.
 3. Wait ~60 seconds for it to boot (green LED activity).
 
