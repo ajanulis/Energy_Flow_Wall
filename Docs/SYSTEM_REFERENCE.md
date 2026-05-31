@@ -10,7 +10,7 @@
 
 ## Device Types in Mesh
 - **Gateway**: RP5 + NC1000, runs NeoGateway TCP server, Node-RED, InfluxDB, Grafana
-- **Actuator**: PSoC5 + NC1000 + DRV8411A + 2 motors + 2 encoders + SHT45. Controls flaps. Node IDs confirmed: 0x55, 0x66.
+- **Actuator**: PSoC5 + NC1000 + DRV8411A + 2 motors + 2 encoders + SHT45. Controls flaps. NC1000 mesh node ID: 0x55 (decimal 85).
 - **Device**: NC1000-only nodes collecting T/H data. Node IDs: 0x33, 0x44.
 
 ## Actuator Hardware (Main PCB — KiCad: Hardware/KiCad/Main_PCB_Based_on_8411A)
@@ -168,7 +168,7 @@ Source: PSoC_schematics_full_w_8411A_w_interrupt_new.pdf
 
 ## Sensor Formulas (Node-RED function d110437aa9daf440)
 - 0x33, 0x44 (HTU21D): T = -46.85 + 175.72 × raw/65536, RH = -6 + 125 × raw/65536; mask raw & 0xFFFC
-- 0x55, 0x66 (SHT45): T = -45.0 + 175.0 × raw/65535, RH = -6.0 + 125.0 × raw/65535; mask raw & 0xFFFC
+- 0x55 (SHT45): T = -45.0 + 175.0 × raw/65535, RH = -6.0 + 125.0 × raw/65535; mask raw & 0xFFFC
 
 ## GitHub
 - Repo: https://github.com/ajanulis/Energy_Flow_Wall.git
