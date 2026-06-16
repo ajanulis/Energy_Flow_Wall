@@ -31,6 +31,10 @@ The Device replaces the retired 0x33 / 0x44 NC1000-only test-only T/H sniffers.
 | [Sniffer_Concept.md](Sniffer_Concept.md) | Exploratory concept for a future mains-powered premium air-quality variant on the same mesh. Not yet committed. |
 | `scripts/grab_datasheets.py` | Idempotent downloader for the Device datasheets. |
 | `scripts/DOWNLOADS_TODO.md` | List of files that need to be downloaded manually (gated PDFs, login walls, CDN-fighting-curl, etc.). |
+| [`Docs/02_Display_Touch/READ_FIRST.md`](Docs/02_Display_Touch/READ_FIRST.md) | Porting strategy for the GoodDisplay GDEY042T81-T02 reference firmware (STM32F103) to the STM32U585 production target. |
+| `Docs/DOWNLOADS_TODO.html` | HTML rendering of `scripts/DOWNLOADS_TODO.md`. |
+
+The `Docs/` subdirectory holds annotations about external reference materials kept locally; the third-party datasheets and vendor sample-code archives themselves are not in this repo for licensing and repo-size reasons.
 
 ## Sibling content in this repo
 
