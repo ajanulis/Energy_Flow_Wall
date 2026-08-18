@@ -38,6 +38,7 @@ The `Docs/` subdirectory holds annotations about external reference materials ke
 
 ## Sibling content in this repo
 
-- [`../KiCad/Main_PCB_Based_on_8411A/`](../KiCad/Main_PCB_Based_on_8411A/) — the Actuator KiCad design (sibling node, useful reference).
-- [`../../Docs/`](../../Docs/) — system-level documentation (SYSTEM_REFERENCE, COMMANDS, etc.).
-- [Energy_Flow_Wall_Code](https://github.com/ajanulis/Energy_Flow_Wall_Code) — firmware + scripts repo. Device firmware will land there under `firmware/device/` once bring-up starts.
+- [`../Actuator/KiCad/Main_PCB_Based_on_8411A/`](../Actuator/KiCad/Main_PCB_Based_on_8411A/) — the Actuator KiCad design (sibling node, useful reference).
+- [`../Docs/`](../Docs/) — system-level documentation (SYSTEM_REFERENCE, EFW_Functional_Requirements, etc.).
+- [Energy_Flow_Wall_Code](https://github.com/ajanulis/Energy_Flow_Wall_Code) — private firmware + scripts repo; Device firmware now lives there under `firmware/device/`.
+- [Energy_Flow_Wall_Device](https://github.com/ajanulis/Energy_Flow_Wall_Device) — public progress notes/photos for the working e-paper dashboard unit (this folder is the earlier hardware-planning stage).

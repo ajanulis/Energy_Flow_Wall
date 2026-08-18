@@ -1,59 +1,54 @@
-# Energy Flow Wall - CAD Files (Public)
+# Energy Flow Wall (Public)
 
-**Public repository** for sharing Fusion 360 3D CAD models of the Energy Flow Wall actuator.
+Public hardware/reference repository for the Energy Flow Wall mesh-networked
+ventilation valve system, organized by subsystem:
 
-## Files
-
-### 3D CAD Model
-- **Actuator_EFW#4_based_on_8411A v4_non_symmetrical_case.f3d** - Fusion 360 design file
-
-## Download
-
-You can download the Fusion 360 file directly:
-
-**Direct Download Link:**
 ```
-https://github.com/ajanulis/Energy_Flow_Wall/raw/main/Actuator_EFW%234_based_on_8411A%20v4_non_symmetrical_case.f3d
+Actuator/   Wall-mounted valve unit — KiCad PCB designs, Fusion 360 case, manuals
+Gateway/    Raspberry Pi + NC1000 mesh gateway — NeoCortec protocol docs
+Device/     In-room e-paper touchscreen — hardware planning, procurement, datasheets
+Docs/       Whole-system docs (functional requirements, architecture reference)
 ```
 
-## Project Overview
-
-This is the mechanical design for an Energy Flow Wall actuator based on the DRV8411A motor driver chip. The design features:
-
-- Non-symmetrical case (version 4)
-- Integration with PSoC 5 (CY8C5888LTQ-LP097) microcontroller
-- NC1000 mesh network module support
-- Motor driver circuitry based on DRV8411A
-
-## Hardware Components
-
-- **Microcontroller:** PSoC 5 (CY8C5888LTQ-LP097)
-- **Motor Driver:** DRV8411A
-- **Communication:** NC1000 Mesh Network Module
-- **Interface:** UART (115200 baud)
-
-## Documentation
-
-- [`Docs/DK_USER_MANUAL.md`](Docs/DK_USER_MANUAL.md) — End-user manual for the shipped demo unit: setup, dashboard usage, Demo Mode, troubleshooting.
-- [`Docs/COMMANDS.md`](Docs/COMMANDS.md) — Developer/integrator reference: MQTT topics, JSON request format, full firmware command set, timeouts.
-- [`Docs/SYSTEM_REFERENCE.md`](Docs/SYSTEM_REFERENCE.md) — High-level system reference (architecture, mesh layout).
-- [`Docs/EFW_Functional_Requirements_1.md`](Docs/EFW_Functional_Requirements_1.md) — Original functional requirements document.
-
-## Related Repositories
-
-The source code (firmware, RP5 pipeline, Node-RED deploy scripts) is maintained in a separate private repository. The documents above cover everything needed to interact with the system over MQTT without touching the source.
+Source code (firmware, Gateway pipeline, Node-RED deploy scripts) is
+maintained in a separate private repository. `Device/`'s own progress
+notes, photos, and manuals are also published separately, publicly, at
+[Energy_Flow_Wall_Device](https://github.com/ajanulis/Energy_Flow_Wall_Device).
 
 ---
 
-## License
+## Actuator
 
-This CAD file is provided for collaboration and reference purposes.
+The wall unit itself — PSoC5 + NC1000 mesh radio + motors + flaps + fan.
 
-## Opening the File
+- [`Actuator/KiCad/`](Actuator/KiCad/) — PCB designs.
+- [`Actuator/Actuator_EFW#4_based_on_8411A v4_non_symmetrical_case.f3d`](<Actuator/Actuator_EFW%234_based_on_8411A%20v4_non_symmetrical_case.f3d>) — Fusion 360 mechanical design (non-symmetrical case, v4). Open with Autodesk Fusion 360; all parametric history included. [Direct download](<https://github.com/ajanulis/Energy_Flow_Wall/raw/main/Actuator/Actuator_EFW%234_based_on_8411A%20v4_non_symmetrical_case.f3d>).
+- [`Actuator/Manuals/DK_USER_MANUAL.md`](Actuator/Manuals/DK_USER_MANUAL.md) — End-user manual for the shipped demo unit: setup, dashboard usage, Demo Mode, troubleshooting.
+- [`Actuator/Manuals/COMMANDS.md`](Actuator/Manuals/COMMANDS.md) — Developer/integrator reference: MQTT topics, JSON request format, full firmware command set, timeouts.
 
-1. Download the `.f3d` file
-2. Open with **Autodesk Fusion 360**
-3. All design features and parametric history are included
+**Hardware**: PSoC 5 (CY8C5888LTQ-LP097) · DRV8411A motor driver · NC1000 mesh radio · UART 115200 baud.
+
+## Gateway
+
+Raspberry Pi 5 + NC1000 daughterboard, running NeoGateway + Node-RED +
+the MQTT⇌mesh pipeline.
+
+- [`Gateway/NeoCortec/`](Gateway/NeoCortec/) — NeoCortec integration manual, NC1000 datasheet, and UART communication spec — the protocol reference the Gateway pipeline implements against.
+
+## Device
+
+In-room e-paper touchscreen display — hardware planning stage docs (see
+the [public Device repo](https://github.com/ajanulis/Energy_Flow_Wall_Device)
+for live progress/photos of the working unit).
+
+- [`Device/README.md`](Device/README.md), [`Device/Brief.md`](Device/Brief.md) — concept + scope.
+- [`Device/Procurement.md`](Device/Procurement.md), [`Device/Datasheet_Stash.md`](Device/Datasheet_Stash.md) — parts sourcing and reference datasheets.
+- [`Device/HW_Prep.md`](Device/HW_Prep.md), [`Device/Doc_Gaps.md`](Device/Doc_Gaps.md) — bring-up prep notes and known documentation gaps.
+
+## Docs (whole-system)
+
+- [`Docs/SYSTEM_REFERENCE.md`](Docs/SYSTEM_REFERENCE.md) — high-level system reference (architecture, mesh layout).
+- [`Docs/EFW_Functional_Requirements_1.md`](Docs/EFW_Functional_Requirements_1.md) — original functional requirements document.
 
 ---
 
