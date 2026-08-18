@@ -33,6 +33,7 @@ The wall unit itself — PSoC5 + NC1000 mesh radio + motors + flaps + fan.
 Raspberry Pi 5 + NC1000 daughterboard, running NeoGateway + Node-RED +
 the MQTT⇌mesh pipeline.
 
+- [`Gateway/KiCad/Gateway_PCB/`](Gateway/KiCad/Gateway_PCB/) — the RPi/NC1000 HAT PCB design (moved here from `Actuator/KiCad/`, where it was previously grouped by mistake).
 - [`Gateway/NeoCortec/`](Gateway/NeoCortec/) — NeoCortec integration manual, NC1000 datasheet, and UART communication spec — the protocol reference the Gateway pipeline implements against.
 
 ## Device
