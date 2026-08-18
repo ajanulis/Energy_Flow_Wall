@@ -6,7 +6,7 @@
 
 ## 1. What's in the Box
 
-1. **1× Actuator** — the wall unit itself. Contains PSoC5 + NC1000 mesh radio + 2 motors + 2 flaps + fan + built-in T/H sensor. Runs on 1× rechargeable 18650 cell (**not provided** — you'll need to source one).
+1. **1× Actuator** — the window-frame-mounted unit itself. Contains PSoC5 + NC1000 mesh radio + 2 motors + 2 flaps + fan + built-in T/H sensor. Runs on 1× rechargeable 18650 cell (**not provided** — you'll need to source one).
 2. **1× Gateway** — Raspberry Pi 5 with NeoCortec NC1000 mesh daughter board on top. Supplied with EU-compatible power supply.
 3. **3× Xiaomi LYWSD03MMC room sensors** (custom ATC firmware). They aren't physically labelled — Node-RED maps them to **Kitchen**, **Bedroom** and **Living** by MAC address. **Shipped without batteries** — you need **3× CR2032**.
 

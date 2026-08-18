@@ -4,7 +4,7 @@ Public hardware/reference repository for the Energy Flow Wall mesh-networked
 ventilation valve system, organized by subsystem:
 
 ```
-Actuator/   Wall-mounted valve unit — KiCad PCB designs, Fusion 360 case, manuals
+Actuator/   Window-frame-mounted valve unit — KiCad PCB designs, Fusion 360 case, manuals
 Gateway/    Raspberry Pi + NC1000 mesh gateway — NeoCortec protocol docs
 Device/     In-room e-paper touchscreen — hardware planning, procurement, datasheets, working-prototype photos
 Docs/       Whole-system docs (functional requirements, architecture reference)
@@ -17,7 +17,7 @@ maintained in a separate private repository.
 
 ## Actuator
 
-The wall unit itself — PSoC5 + NC1000 mesh radio + motors + flaps + fan.
+The window-frame-mounted unit itself — PSoC5 + NC1000 mesh radio + motors + flaps + fan.
 
 - [`Actuator/KiCad/`](Actuator/KiCad/) — PCB designs.
 - [`Actuator/Actuator_EFW#4_based_on_8411A v4_non_symmetrical_case.f3d`](<Actuator/Actuator_EFW%234_based_on_8411A%20v4_non_symmetrical_case.f3d>) — Fusion 360 mechanical design (non-symmetrical case, v4). Open with Autodesk Fusion 360; all parametric history included. [Direct download](<https://github.com/ajanulis/Energy_Flow_Wall/raw/main/Actuator/Actuator_EFW%234_based_on_8411A%20v4_non_symmetrical_case.f3d>).
