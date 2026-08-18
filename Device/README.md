@@ -1,8 +1,40 @@
 # Device — In-Room User-Facing Mesh Node
 
-This directory holds the design intent, prep work, and procurement notes for the **EFW Device** — the third node type in the Energy Flow Wall mesh, alongside the Gateway (RP5 + NeoGW) and the Actuator (flap motors).
+This directory holds the design intent, prep work, procurement notes, and
+working-prototype progress for the **EFW Device** — the third node type
+in the Energy Flow Wall mesh, alongside the Gateway (RP5 + NeoGW) and the
+Actuator (flap motors).
 
-**Status:** hardware not yet designed. All schematic decisions are locked at the architectural level; PCB layout is the next step.
+**Status:** custom PCB not yet designed (all schematic decisions are
+locked at the architectural level, PCB layout is the next step), but a
+working touchscreen dashboard is already running end-to-end on an
+STM32U5 Nucleo dev board over the real mesh — see below.
+
+## Working prototype
+
+| Auto mode | Manual override |
+|---|---|
+| ![Dashboard in auto mode](photos/dashboard_auto_mode.jpg) | ![Dashboard in manual mode](photos/dashboard_example.jpg) |
+| Valve following its normal schedule — tall **"Close ventilation"** button offers to override it. | A manual override active (here, from a DESIRED nudge) — short **"AUTO"** button, with the till-time shown, cancels it. |
+
+A 4.2" e-paper touchscreen (GDEY042T81, FT6336U touch) on an STM32U5
+Nucleo, talking to the mesh over a NeoCortec NC1000 radio. In-room
+display + manual override panel for one valve zone — no phone or laptop
+needed to see the current temperature or flip into manual mode.
+
+**What it shows:**
+- **ACTUAL** — the room's current temperature, live from the mesh.
+- **DESIRED** — the target temperature; tap `-0.5C` / `+0.5C` to nudge it.
+- **Date / time** — synced live, every ~30s.
+- **Chart** — a live temperature history kept on-device: tap the top of
+  the chart to zoom out (3h → 6h → 12h → 24h → 48h → 7d), the bottom to
+  zoom back in, and the left/right halves to scroll back/forward in time.
+- **Valve button** — the black bar along the bottom, showing either
+  "Close ventilation" (Auto mode) or "AUTO" + a manual-override till-time.
+
+Firmware source, build/flash instructions, and a fuller writeup live in
+the private code repo (see below) — this directory is progress notes and
+photos only.
 
 ## What the Device is
 
@@ -40,5 +72,4 @@ The `Docs/` subdirectory holds annotations about external reference materials ke
 
 - [`../Actuator/KiCad/Main_PCB_Based_on_8411A/`](../Actuator/KiCad/Main_PCB_Based_on_8411A/) — the Actuator KiCad design (sibling node, useful reference).
 - [`../Docs/`](../Docs/) — system-level documentation (SYSTEM_REFERENCE, EFW_Functional_Requirements, etc.).
-- [Energy_Flow_Wall_Code](https://github.com/ajanulis/Energy_Flow_Wall_Code) — private firmware + scripts repo; Device firmware now lives there under `firmware/device/`.
-- [Energy_Flow_Wall_Device](https://github.com/ajanulis/Energy_Flow_Wall_Device) — public progress notes/photos for the working e-paper dashboard unit (this folder is the earlier hardware-planning stage).
+- [Energy_Flow_Wall_Code](https://github.com/ajanulis/Energy_Flow_Wall_Code) — private firmware + scripts repo; Device firmware (build/flash instructions, full technical writeup) lives there under `firmware/device/epaper_bringup/`.

@@ -6,14 +6,12 @@ ventilation valve system, organized by subsystem:
 ```
 Actuator/   Wall-mounted valve unit — KiCad PCB designs, Fusion 360 case, manuals
 Gateway/    Raspberry Pi + NC1000 mesh gateway — NeoCortec protocol docs
-Device/     In-room e-paper touchscreen — hardware planning, procurement, datasheets
+Device/     In-room e-paper touchscreen — hardware planning, procurement, datasheets, working-prototype photos
 Docs/       Whole-system docs (functional requirements, architecture reference)
 ```
 
 Source code (firmware, Gateway pipeline, Node-RED deploy scripts) is
-maintained in a separate private repository. `Device/`'s own progress
-notes, photos, and manuals are also published separately, publicly, at
-[Energy_Flow_Wall_Device](https://github.com/ajanulis/Energy_Flow_Wall_Device).
+maintained in a separate private repository.
 
 ---
 
@@ -38,11 +36,13 @@ the MQTT⇌mesh pipeline.
 
 ## Device
 
-In-room e-paper touchscreen display — hardware planning stage docs (see
-the [public Device repo](https://github.com/ajanulis/Energy_Flow_Wall_Device)
-for live progress/photos of the working unit).
+In-room e-paper touchscreen display. Custom PCB is still in the planning
+stage, but a working touchscreen dashboard already runs end-to-end on an
+STM32U5 Nucleo — see [`Device/README.md`](Device/README.md) for photos
+and a walkthrough of what it does.
 
-- [`Device/README.md`](Device/README.md), [`Device/Brief.md`](Device/Brief.md) — concept + scope.
+- [`Device/README.md`](Device/README.md) — working-prototype photos + what it does. **Start here.**
+- [`Device/Brief.md`](Device/Brief.md) — architectural decisions + concept/scope.
 - [`Device/Procurement.md`](Device/Procurement.md), [`Device/Datasheet_Stash.md`](Device/Datasheet_Stash.md) — parts sourcing and reference datasheets.
 - [`Device/HW_Prep.md`](Device/HW_Prep.md), [`Device/Doc_Gaps.md`](Device/Doc_Gaps.md) — bring-up prep notes and known documentation gaps.
 
